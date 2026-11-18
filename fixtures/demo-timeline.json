@@ -1,0 +1,110 @@
+{
+  "project": { "name": "todo-app", "path": "~/projects/todo-app (demo)", "isGit": true },
+  "maxConcurrent": 3,
+  "pace": 2.2,
+  "suggestedGoal": "Add a dark mode toggle that remembers my choice",
+  "lead": {
+    "name": "Foreman",
+    "script": [
+      { "text": "Reading the goal", "ms": 1200, "usage": 6200 },
+      { "text": "Scanning the project layout", "ms": 1800, "usage": 9400, "output": ["> ls src/ styles/", "app.js  theme.js  storage.js  styles/main.css"] },
+      { "text": "Splitting the goal into work orders", "ms": 1800, "usage": 12800 }
+    ]
+  },
+  "orders": [
+    {
+      "id": "o1",
+      "name": "Pip",
+      "title": "Map where colors are defined",
+      "ownerRole": "planner",
+      "allowedFiles": ["styles/main.css"],
+      "acceptance": "A list of every hard-coded color, grouped into tokens",
+      "prompt": "Find every hard-coded color and propose CSS variables.",
+      "dependsOn": [],
+      "summary": "Found 14 hard-coded colors in 3 files and grouped them into 6 tokens.",
+      "script": [
+        { "text": "Reading styles/main.css", "ms": 1500, "usage": 8000 },
+        { "text": "Grouping colors into tokens", "ms": 2200, "usage": 12000, "plan": [{ "text": "List colors", "status": "done" }, { "text": "Group into tokens", "status": "doing" }] },
+        { "text": "Writing the token map", "ms": 1800, "usage": 14500, "file": { "path": "docs/tokens.md", "added": 24, "removed": 0, "diff": "--- /dev/null\n+++ b/docs/tokens.md\n@@ -0,0 +1,6 @@\n+# Color tokens\n+--bg: #fdf8ef\n+--surface: #ffffff\n+--ink: #1f2a24\n+--accent: #7a6cf0\n+--good: #3f8f63\n" } }
+      ]
+    },
+    {
+      "id": "o2",
+      "name": "Rivet",
+      "title": "Add theme tokens and the toggle button",
+      "ownerRole": "builder",
+      "allowedFiles": ["styles/main.css", "src/theme.js", "index.html"],
+      "acceptance": "A toggle switches light and dark; all colors come from variables",
+      "prompt": "Move colors to CSS variables and add a light/dark toggle.",
+      "dependsOn": [],
+      "summary": "Colors now come from CSS variables and a toggle switches light and dark.",
+      "script": [
+        { "text": "Reading styles/main.css", "ms": 1400, "usage": 10000 },
+        { "text": "Replacing colors with variables", "ms": 2400, "usage": 15000, "plan": [{ "text": "Define variables", "status": "done" }, { "text": "Add toggle", "status": "doing" }, { "text": "Build", "status": "todo" }], "file": { "path": "styles/main.css", "added": 22, "removed": 14, "diff": "--- a/styles/main.css\n+++ b/styles/main.css\n@@ -1,6 +1,10 @@\n+:root { --bg: #fdf8ef; --ink: #1f2a24; }\n+[data-theme=\"dark\"] { --bg: #14181a; --ink: #f2efe6; }\n body {\n-  background: #fdf8ef;\n-  color: #1f2a24;\n+  background: var(--bg);\n+  color: var(--ink);\n }\n" } },
+        { "text": "Adding the toggle button", "ms": 2200, "usage": 19000, "file": { "path": "src/theme.js", "added": 18, "removed": 0, "diff": "--- /dev/null\n+++ b/src/theme.js\n@@ -0,0 +1,8 @@\n+export function toggleTheme() {\n+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';\n+  document.documentElement.dataset.theme = next;\n+  return next;\n+}\n" } },
+        { "text": "Building the project", "ms": 2000, "usage": 21000, "approval": { "title": "Run: npm run build", "kind": "execute", "detail": "npm run build (in the todo-app folder)" }, "output": ["> npm run build", "built in 412ms"] }
+      ]
+    },
+    {
+      "id": "o3",
+      "name": "Nova",
+      "title": "Remember the theme choice",
+      "ownerRole": "builder",
+      "allowedFiles": ["src/storage.js", "src/app.js"],
+      "acceptance": "Reloading the page keeps the chosen theme",
+      "prompt": "Persist the chosen theme and restore it on load.",
+      "dependsOn": [],
+      "summary": "The chosen theme is saved and restored on load.",
+      "script": [
+        { "text": "Reading src/storage.js", "ms": 1400, "usage": 9000 },
+        { "text": "Saving the theme on change", "ms": 2300, "usage": 14000, "file": { "path": "src/storage.js", "added": 12, "removed": 1, "diff": "--- a/src/storage.js\n+++ b/src/storage.js\n@@ -10,3 +10,9 @@\n+export const saveTheme = (t) => localStorage.setItem('theme', t);\n+export const loadTheme = () => localStorage.getItem('theme');\n" } },
+        {
+          "text": "Running the persistence test",
+          "ms": 2000,
+          "usage": 18000,
+          "check": {
+            "name": "persist.test.js",
+            "status": "fail",
+            "output": "expected 'dark' after reload, got undefined",
+            "fixText": "Fixing the storage key",
+            "fixOutput": ["> the load path reads 'theme' but the save path wrote 'theme '", "> aligned both on one key"],
+            "fixFile": { "path": "src/app.js", "added": 4, "removed": 2, "diff": "--- a/src/app.js\n+++ b/src/app.js\n@@ -3,3 +3,5 @@\n-const t = loadTheme() ?? 'light';\n+const t = loadTheme() || 'light';\n+document.documentElement.dataset.theme = t;\n" },
+            "retryText": "Re-running persist.test.js",
+            "passOutput": "3 passing"
+          }
+        }
+      ]
+    },
+    {
+      "id": "o4",
+      "name": "Dot",
+      "title": "Make the settings page respect the theme",
+      "ownerRole": "builder",
+      "allowedFiles": ["src/settings.js", "styles/settings.css"],
+      "acceptance": "The settings page uses the same variables and looks right in both themes",
+      "prompt": "Update the settings page to use theme variables.",
+      "dependsOn": [],
+      "summary": "The settings page uses theme variables and reads correctly in both themes.",
+      "script": [
+        { "text": "Reading src/settings.js", "ms": 1500, "usage": 8500 },
+        { "text": "Switching to theme variables", "ms": 2400, "usage": 13500, "file": { "path": "styles/settings.css", "added": 9, "removed": 9, "diff": "--- a/styles/settings.css\n+++ b/styles/settings.css\n@@ -1,4 +1,4 @@\n-.panel { background: #fff; color: #222; }\n+.panel { background: var(--surface); color: var(--ink); }\n" } },
+        { "text": "Checking contrast in both themes", "ms": 1800, "usage": 15000 }
+      ]
+    },
+    {
+      "id": "o5",
+      "name": "Tally",
+      "title": "Run the full suite and review the result",
+      "ownerRole": "checker",
+      "allowedFiles": [],
+      "acceptance": "All tests pass and no hard-coded colors remain",
+      "prompt": "Run the test suite and search for leftover hard-coded colors.",
+      "dependsOn": ["o2", "o3", "o4"],
+      "summary": "All 24 tests pass and no hard-coded colors are left.",
+      "script": [
+        { "text": "Running the full test suite", "ms": 2400, "usage": 9000, "check": { "name": "npm test", "status": "pass", "output": "24 passing" } },
+        { "text": "Searching for leftover hard-coded colors", "ms": 1800, "usage": 11000, "output": ["> grep -rn '#[0-9a-f]\\{6\\}' src styles", "0 matches outside tokens"] }
+      ]
+    }
+  ]
+}

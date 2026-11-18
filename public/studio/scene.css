@@ -1,0 +1,1141 @@
+/* Pocket Studio scene. Colors come ONLY from tokens.css variables (derived tints use color-mix / opacity).
+   Layout geometry (positions, scale, label font) is set inline by studio.js from layout.js; this file is the look and the motion. */
+
+.ps-host {
+  position: relative;
+  overflow: auto;
+}
+
+.ps-root {
+  --ps-wall: color-mix(in srgb, var(--surface) 70%, var(--surface-2));
+  --ps-floor: color-mix(in srgb, var(--stage) 86%, var(--warn));
+  --ps-floor-line: color-mix(in srgb, var(--ink) 9%, transparent);
+  --ps-wood-top: color-mix(in srgb, var(--warn) 30%, var(--surface));
+  --ps-wood-dark: color-mix(in srgb, var(--warn) 42%, var(--screen-bg, var(--ink)));
+  --ps-screen-bg: var(--screen-bg, var(--ink));
+  --ps-fg: var(--screen-fg, var(--surface));
+  --ps-g-warn: color-mix(in srgb, var(--warn) 45%, var(--ps-fg));
+  --ps-g-bad: color-mix(in srgb, var(--bad) 45%, var(--ps-fg));
+  --ps-g-good: color-mix(in srgb, var(--good) 45%, var(--ps-fg));
+  --ps-g-accent: color-mix(in srgb, var(--accent) 45%, var(--ps-fg));
+  --ps-g-builder: color-mix(in srgb, var(--role-builder) 55%, var(--ps-fg));
+  --ps-door-in: color-mix(in srgb, var(--ps-screen-bg) 88%, var(--warn));
+  --ps-glow: color-mix(in srgb, var(--warn) 55%, var(--surface));
+  --ps-mat: color-mix(in srgb, var(--role-lead) 40%, var(--surface));
+  --ps-sky: color-mix(in srgb, var(--role-planner) 30%, var(--surface));
+  --ps-sign: color-mix(in srgb, var(--warn) 24%, var(--surface));
+  --f: 12px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 480px;
+  min-height: 320px;
+  overflow: hidden;
+  isolation: isolate;
+  box-sizing: border-box;
+  border-radius: var(--radius-lg);
+  background: var(--ps-floor);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.25;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  contain: layout paint;
+}
+
+/* ---- room ------------------------------------------------------------------------------------------------------- */
+
+.ps-wall {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background:
+    linear-gradient(to bottom, transparent 55%, color-mix(in srgb, var(--ps-screen-bg) 7%, transparent)),
+    repeating-linear-gradient(90deg, transparent 0 46px, color-mix(in srgb, var(--ink) 4%, transparent) 46px 48px),
+    var(--ps-wall);
+  border-bottom: 5px solid var(--ps-wood-dark);
+  box-sizing: border-box;
+}
+
+.ps-floor {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background:
+    radial-gradient(ellipse at 50% 38%, color-mix(in srgb, var(--surface) 34%, transparent), transparent 70%),
+    repeating-linear-gradient(30deg, transparent 0 41px, var(--ps-floor-line) 41px 42px),
+    repeating-linear-gradient(-30deg, transparent 0 41px, var(--ps-floor-line) 41px 42px),
+    var(--ps-floor);
+}
+
+.ps-floor::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, transparent 62%, color-mix(in srgb, var(--ps-screen-bg) 14%, transparent));
+  pointer-events: none;
+}
+
+.ps-rug {
+  position: absolute;
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--role-lead) 10%, transparent);
+  border: 2px dashed color-mix(in srgb, var(--role-lead) 35%, transparent);
+  pointer-events: none;
+}
+
+.ps-decor {
+  position: absolute;
+  pointer-events: none;
+}
+
+.ps-decor .ps-svg,
+.ps-plant .ps-svg,
+.ps-door .ps-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ps-plant {
+  position: absolute;
+  pointer-events: none;
+}
+
+.ps-runner {
+  position: absolute;
+  border-radius: 999px;
+  background:
+    repeating-linear-gradient(to bottom, color-mix(in srgb, var(--role-lead) 42%, transparent) 0 6px, transparent 6px 14px) center / 3px 100% no-repeat,
+    color-mix(in srgb, var(--role-lead) 9%, transparent);
+  pointer-events: none;
+}
+
+/* ---- stage door ------------------------------------------------------------------------------------------------- */
+
+.ps-door {
+  position: absolute;
+  z-index: 2;
+}
+
+.ps-door-sign {
+  position: absolute;
+  left: 50%;
+  top: 2%;
+  transform: translateX(-50%);
+  max-width: 96%;
+  padding: 1px 0.5em;
+  border-radius: 5px;
+  background: var(--ps-sign);
+  border: 1.5px solid var(--ps-wood-dark);
+  color: var(--ink);
+  font: 800 max(9px, calc(var(--f) * 0.82)) var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ps-door-count {
+  position: absolute;
+  right: -2px;
+  top: calc(2% + 14px);
+  min-width: 1.7em;
+  height: 1.7em;
+  padding: 0 0.3em;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: var(--warn);
+  color: var(--accent-ink);
+  font: 800 max(10px, calc(var(--f) * 0.9)) var(--font-display);
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--surface);
+}
+
+.ps-door-count[hidden] {
+  display: none;
+}
+
+/* ---- done shelf ------------------------------------------------------------------------------------------------- */
+
+.ps-shelf {
+  position: absolute;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px;
+  border: 3px solid var(--ps-wood-dark);
+  border-radius: 9px 9px 4px 4px;
+  background: color-mix(in srgb, var(--ps-wood-top) 80%, var(--ps-door-in));
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ps-wood-top) 70%, transparent);
+}
+
+.ps-shelf-head {
+  flex: none;
+  text-align: center;
+  font: 800 max(9px, calc(var(--f) * 0.78)) var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 2px;
+  border-radius: 4px;
+  background: var(--ps-sign);
+  color: var(--ink);
+}
+
+.ps-shelf-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows, 2), minmax(0, 1fr));
+  gap: 4px 3px;
+  padding: 3px 3px 5px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--ps-wood-dark) 30%, var(--surface));
+  box-shadow: inset 0 2px 5px color-mix(in srgb, var(--ps-wood-dark) 45%, transparent);
+}
+
+.ps-tile {
+  position: relative;
+  min-height: 0;
+  border-radius: 2px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-sizing: border-box;
+  box-shadow: 0 2px 0 var(--ps-wood-dark);
+}
+
+.ps-tile[data-kind="empty"] {
+  background: color-mix(in srgb, var(--ps-wood-dark) 12%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--ps-wood-dark) 45%, transparent);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--ps-wood-dark) 60%, transparent);
+}
+
+.ps-tile[data-kind="empty"]::before {
+  display: none;
+}
+
+.ps-tile::before {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 22%;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ink-soft);
+  box-shadow: 0 4px 0 var(--ink-soft), 0 8px 0 var(--ink-soft);
+  opacity: 0.45;
+}
+
+.ps-tile[data-kind="stamped"] {
+  border-color: var(--good);
+}
+
+.ps-tile[data-kind="stamped"]::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 52%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--good);
+  -webkit-mask: radial-gradient(circle, #000 98%, transparent) center / 100% 100%;
+  box-shadow: inset 0 0 0 1px var(--surface);
+}
+
+.ps-tile[data-kind="pending"] {
+  border: 1.5px dashed var(--warn);
+  background: color-mix(in srgb, var(--warn) 14%, var(--surface));
+}
+
+.ps-tile[data-kind="held"] {
+  border: 1.5px dashed var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+}
+
+.ps-tile-more {
+  grid-column: span 2;
+  display: grid;
+  place-items: center;
+  font: 800 max(9px, calc(var(--f) * 0.8)) var(--font-display);
+  color: var(--ink);
+  background: var(--ps-sign);
+  border-radius: 3px;
+}
+
+.ps-tile.ps-fresh {
+  animation: ps-tile-in 0.7s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+/* ---- desks ------------------------------------------------------------------------------------------------------ */
+
+.ps-desk {
+  --rc: var(--role-builder);
+  position: absolute;
+  z-index: var(--z, 1);
+  cursor: pointer;
+  outline: none;
+  border-radius: var(--radius);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ps-desk[data-role="lead"] { --rc: var(--role-lead); }
+.ps-desk[data-role="planner"] { --rc: var(--role-planner); }
+.ps-desk[data-role="builder"] { --rc: var(--role-builder); }
+.ps-desk[data-role="checker"] { --rc: var(--role-checker); }
+
+.ps-desk[aria-disabled="true"] {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.ps-desk:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.ps-desk[aria-pressed="true"] {
+  z-index: 50;
+}
+
+.ps-desk.ps-walking,
+.ps-desk.ps-fxing {
+  z-index: 70;
+}
+
+.ps-plate {
+  position: absolute;
+  inset: -4px -3px -3px;
+  box-sizing: border-box;
+  border: 2px solid color-mix(in srgb, var(--rc) 24%, transparent);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--rc) 9%, transparent);
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.ps-plate::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 3px solid var(--warn);
+  border-radius: calc(var(--radius-lg) + 5px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ps-desk:hover .ps-plate {
+  background: color-mix(in srgb, var(--rc) 17%, transparent);
+  border-color: color-mix(in srgb, var(--rc) 45%, transparent);
+}
+
+.ps-desk[aria-pressed="true"] .ps-plate {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 38%, transparent), var(--shadow);
+}
+
+.ps-desk[data-status="waiting_approval"] .ps-plate {
+  border-color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 20%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 35%, transparent), 0 0 18px color-mix(in srgb, var(--warn) 55%, transparent);
+}
+
+.ps-desk[data-status="waiting_approval"] .ps-plate::after {
+  animation: ps-ring 1.7s steps(9) infinite;
+}
+
+.ps-desk[data-status="blocked"] .ps-plate,
+.ps-desk[data-status="failed"] .ps-plate {
+  border-color: color-mix(in srgb, var(--bad) 70%, transparent);
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+}
+
+.ps-desk[data-status="held"] .ps-plate {
+  border: 2px dashed var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.ps-desk[data-status="done"] .ps-plate {
+  border-color: color-mix(in srgb, var(--good) 65%, transparent);
+  background: color-mix(in srgb, var(--good) 11%, transparent);
+}
+
+.ps-desk[aria-pressed="true"][data-status="waiting_approval"] .ps-plate {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent), 0 0 18px color-mix(in srgb, var(--warn) 55%, transparent);
+}
+
+.ps-desk[data-status="queued"] .ps-front,
+.ps-desk[data-status="queued"] .ps-back {
+  opacity: 0.72;
+}
+
+.ps-desk[data-status="idle"] .ps-front {
+  opacity: 0.94;
+}
+
+.ps-back,
+.ps-front {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 156px;
+  height: 124px;
+  transform: scale(var(--s, 1));
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.ps-back .ps-svg,
+.ps-front .ps-svg {
+  display: block;
+  width: 156px;
+  height: 124px;
+  overflow: visible;
+}
+
+.ps-char {
+  position: absolute;
+  left: calc(34px * var(--s, 1));
+  top: calc(4px * var(--s, 1));
+  width: calc(88px * var(--s, 1));
+  height: calc(88px * var(--s, 1));
+  transform-origin: 0 0;
+  pointer-events: none;
+  transition: transform 0.6s ease;
+}
+
+.ps-desk[data-status="queued"] .ps-char {
+  transform: translate(var(--qx, 0px), var(--qy, 0px)) scale(var(--qk, 1));
+}
+
+.ps-desk.ps-walking .ps-char {
+  transition: transform 1.1s cubic-bezier(0.45, 0, 0.25, 1);
+}
+
+/* a queued character stands at the stage door, so the door line is the click target for that worker */
+.ps-desk[data-status="queued"] .ps-char {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.ps-desk[aria-pressed="true"][data-status="queued"] .ps-char {
+  filter: drop-shadow(0 0 3px var(--accent)) drop-shadow(0 0 7px var(--accent));
+}
+
+.ps-pose {
+  position: absolute;
+  inset: 0;
+}
+
+.ps-pose svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ps-pose.ps-in {
+  animation: ps-pose-in 0.38s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+}
+
+.ps-pose.ps-out {
+  animation: ps-pose-out 0.22s ease-in forwards;
+  pointer-events: none;
+}
+
+.ps-char.ps-shake {
+  animation: ps-shake 0.6s ease-in-out;
+}
+
+.ps-char.ps-hop {
+  animation: ps-hop 0.5s ease-out;
+}
+
+/* monitor glyphs: only the one for the current status is visible */
+.ps-g {
+  display: none;
+}
+
+.ps-desk[data-status="idle"] .ps-g-idle,
+.ps-desk[data-status="queued"] .ps-g-queued,
+.ps-desk[data-status="working"] .ps-g-working,
+.ps-desk[data-status="waiting_approval"] .ps-g-waiting_approval,
+.ps-desk[data-status="held"] .ps-g-held,
+.ps-desk[data-status="blocked"] .ps-g-blocked,
+.ps-desk[data-status="done"] .ps-g-done,
+.ps-desk[data-status="failed"] .ps-g-failed {
+  display: inline;
+}
+
+.ps-desk[data-status="waiting_approval"] .ps-screen,
+.ps-desk[data-status="blocked"] .ps-screen {
+  animation: ps-screen-pulse 1.4s steps(4) infinite;
+}
+
+/* ---- desk labels (real pixels, never scaled) ---------------------------------------------------------------------- */
+
+.ps-labels {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 0 calc(3px * var(--s, 1));
+  top: calc(124px * var(--s, 1));
+  height: var(--lh, 40px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "name batt"
+    "sign sign"
+    "pill frac";
+  align-content: start;
+  gap: 2px 4px;
+  font-size: var(--f, 12px);
+  pointer-events: none;
+}
+
+.ps-compact .ps-labels {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "pill name batt"
+    "sign sign sign";
+}
+
+.ps-compact .ps-frac,
+.ps-compact .ps-pill-txt,
+.ps-compact .ps-role {
+  display: none;
+}
+
+/* very small desks: the whole name fits on its own row; status icon and battery sit on the desk's lower corners */
+.ps-tiny .ps-labels {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "name"
+    "sign";
+}
+
+.ps-tiny .ps-pill,
+.ps-tiny .ps-batt {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 1px;
+}
+
+.ps-tiny .ps-pill { left: 0; }
+.ps-tiny .ps-batt { right: 3px; }
+
+.ps-nm {
+  grid-area: name;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  line-height: 1.3;
+}
+
+.ps-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 0.45em;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--rc) 20%, var(--surface));
+  border-left: 0.3em solid var(--rc);
+  color: var(--ink);
+  font: 800 1em var(--font-display);
+}
+
+.ps-role {
+  flex: none;
+  color: var(--ink-soft);
+  font-size: 0.86em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ps-desk[aria-pressed="true"] .ps-name {
+  background: var(--accent);
+  border-left-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.ps-batt {
+  grid-area: batt;
+  align-self: center;
+  position: relative;
+  width: 1.9em;
+  height: 0.82em;
+  box-sizing: border-box;
+  border: 1.5px solid var(--ink-soft);
+  border-radius: 3px;
+  padding: 1px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+.ps-batt::after {
+  content: "";
+  position: absolute;
+  right: -3.5px;
+  top: 28%;
+  width: 2px;
+  height: 44%;
+  border-radius: 0 1px 1px 0;
+  background: var(--ink-soft);
+}
+
+.ps-batt i {
+  display: block;
+  height: 100%;
+  width: 50%;
+  border-radius: 1px;
+  background: var(--good);
+}
+
+.ps-batt[data-lvl="low"] i { background: var(--warn); }
+.ps-batt[data-lvl="crit"] i { background: var(--bad); }
+.ps-batt[hidden] { display: none; }
+
+.ps-sign {
+  grid-area: sign;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 0.1em 0.5em 0.28em;
+  border-radius: 4px;
+  background: var(--ps-sign);
+  border: 1px solid color-mix(in srgb, var(--ps-wood-dark) 40%, transparent);
+  color: var(--ink);
+  font-size: 0.94em;
+  line-height: 1.25;
+}
+
+.ps-sign[data-empty="true"] {
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.ps-prog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+.ps-prog[hidden] { display: none; }
+
+.ps-prog i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--rc);
+}
+
+.ps-pill-txt {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ps-pill {
+  grid-area: pill;
+  justify-self: start;
+  max-width: 100%;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  box-sizing: border-box;
+  height: 1.55em;
+  padding: 0 0.6em 0 0.4em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 10%, var(--surface));
+  color: var(--ink);
+  font-size: 0.92em;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ps-pill svg {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+}
+
+.ps-compact .ps-pill {
+  width: 1.7em;
+  height: 1.7em;
+  padding: 0;
+  justify-content: center;
+}
+
+.ps-desk[data-status="queued"] .ps-pill { background: var(--surface-2); }
+.ps-desk[data-status="working"] .ps-pill { background: color-mix(in srgb, var(--accent) 24%, var(--surface)); }
+.ps-desk[data-status="waiting_approval"] .ps-pill { background: var(--warn); color: var(--accent-ink); }
+.ps-desk[data-status="held"] .ps-pill { background: var(--accent); color: var(--accent-ink); }
+.ps-desk[data-status="blocked"] .ps-pill { background: var(--bad); color: var(--accent-ink); }
+.ps-desk[data-status="done"] .ps-pill { background: var(--good); color: var(--accent-ink); }
+.ps-desk[data-status="failed"] .ps-pill {
+  background: color-mix(in srgb, var(--bad) 20%, var(--surface));
+  box-shadow: inset 0 0 0 1.5px var(--bad);
+}
+
+.ps-frac {
+  grid-area: frac;
+  align-self: center;
+  color: var(--ink-soft);
+  font: 600 0.84em var(--font-mono);
+}
+
+.ps-frac[hidden] { display: none; }
+
+.ps-takeover {
+  position: absolute;
+  left: 50%;
+  top: calc(-4px * var(--s, 1));
+  transform: translateX(-50%);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.1em 0.6em;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 2px solid var(--surface);
+  font: 800 calc(var(--f, 12px) * 0.9) var(--font-display);
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+
+.ps-takeover[hidden] { display: none; }
+
+.ps-takeover svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+.ps-compact .ps-takeover-txt-long { display: none; }
+.ps-takeover-txt-short { display: none; }
+.ps-compact .ps-takeover-txt-short { display: inline; }
+
+/* ---- tooltip, live region ------------------------------------------------------------------------------------------ */
+
+.ps-tip {
+  position: absolute;
+  z-index: 120;
+  left: 0;
+  top: 0;
+  max-width: 270px;
+  box-sizing: border-box;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  font: 12.5px/1.35 var(--font-body);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+
+.ps-tip.ps-show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ps-tip-title { font: 800 13px var(--font-display); }
+.ps-tip-line { color: var(--ink-soft); overflow-wrap: anywhere; white-space: pre-line; }
+.ps-tip-line[hidden] { display: none; }
+
+.ps-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ps-empty {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  transform: translateX(-50%);
+  max-width: 56%;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.ps-empty[hidden] { display: none; }
+
+/* ---- effects ------------------------------------------------------------------------------------------------------- */
+
+.ps-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+}
+
+.ps-plane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 28px;
+  margin: -14px 0 0 -20px;
+  animation: ps-fly var(--dur, 1.1s) cubic-bezier(0.35, 0.1, 0.55, 1) forwards;
+  will-change: transform;
+}
+
+.ps-plane-arc {
+  width: 100%;
+  height: 100%;
+  animation: ps-arc var(--dur, 1.1s) ease-in-out forwards;
+}
+
+.ps-plane-arc svg {
+  display: block;
+  width: calc(40px * var(--ps, 1));
+  height: calc(28px * var(--ps, 1));
+  margin: calc(14px * (1 - var(--ps, 1))) 0 0 calc(20px * (1 - var(--ps, 1)));
+  transform: rotate(var(--rot, 0deg));
+  filter: drop-shadow(0 2px 2px color-mix(in srgb, var(--ps-screen-bg) 25%, transparent));
+}
+
+.ps-stamp {
+  position: absolute;
+  left: 50%;
+  top: calc(40px * var(--s, 1));
+  z-index: 8;
+  transform: translate(-50%, -50%) rotate(-9deg);
+  padding: 0.05em 0.5em;
+  border: 3px solid var(--good);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--good);
+  font: 900 calc(var(--f, 12px) * 1.55) var(--font-display);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: ps-thump 1.7s ease-out forwards;
+}
+
+.ps-sparks {
+  position: absolute;
+  left: 50%;
+  top: calc(34px * var(--s, 1));
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.ps-sparks i {
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--warn);
+  transform: rotate(45deg);
+  animation: ps-spark-out 0.8s ease-out forwards;
+}
+
+.ps-ripple {
+  position: absolute;
+  inset: -2px;
+  border: 3px solid var(--warn);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+  animation: ps-ripple 1.1s ease-out 2 forwards;
+}
+
+/* ---- character pose animations (shared with characterSvg used elsewhere) ------------------------------------- */
+
+.ps-char-svg .ps-zz,
+.ps-char-svg .ps-spark1,
+.ps-char-svg .ps-spark2,
+.ps-char-svg .ps-spark3,
+.ps-char-svg .ps-puff,
+.ps-char-svg .ps-badge,
+.ps-char-svg .ps-ask,
+.ps-char-svg .ps-think,
+.ps-char-svg .ps-needle,
+.ps-char-svg .ps-pin,
+.ps-char-svg .ps-zap,
+.ps-char-svg .ps-stamp-prop,
+.ps-char-svg .ps-write,
+.ps-char-svg .ps-scan,
+.ps-char-svg .ps-route {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Stop-motion timing on purpose: stepped animations only change (and repaint) ~6-10 times a second, so a busy room stays cheap. */
+.ps-char-svg .ps-zz1 { animation: ps-zz 3.4s steps(12) 0s 6; }
+.ps-char-svg .ps-zz2 { animation: ps-zz 3.4s steps(12) 0.55s 6; }
+.ps-char-svg .ps-zz3 { animation: ps-zz 3.4s steps(12) 1.1s 6; }
+.ps-char-svg .ps-tap { animation: ps-tap 0.7s steps(3) 0s 14; }
+.ps-char-svg .ps-dot1 { animation: ps-dot 1.4s steps(3) 0s 8; }
+.ps-char-svg .ps-dot2 { animation: ps-dot 1.4s steps(3) 0.2s 8; }
+.ps-char-svg .ps-dot3 { animation: ps-dot 1.4s steps(3) 0.4s 8; }
+.ps-char-svg .ps-hammer { animation: ps-hammer 0.62s steps(3) infinite; }
+.ps-char-svg .ps-spark1 { animation: ps-twinkle 0.62s steps(3) infinite; }
+.ps-char-svg .ps-write { animation: ps-write 0.9s steps(4) infinite; }
+.ps-char-svg .ps-scan { animation: ps-scan 2.2s steps(9) infinite; }
+.ps-char-svg .ps-route { animation: ps-dash 1s steps(5) infinite; }
+.ps-char-svg .ps-pin { animation: ps-pin 1.3s steps(5) infinite; }
+.ps-char-svg .ps-needle { animation: ps-needle 2.4s steps(10) 0s 6; }
+.ps-char-svg .ps-wave { animation: ps-wave 0.9s steps(4) infinite; }
+.ps-char-svg .ps-ask { animation: ps-ask 1s steps(3) infinite; }
+.ps-char-svg .ps-scratch { animation: ps-scratch 0.5s steps(3) 0s 10; }
+.ps-char-svg .ps-puff1 { animation: ps-puff 2.2s steps(8) 0s 5; }
+.ps-char-svg .ps-puff2 { animation: ps-puff 2.2s steps(8) 0.7s 5; }
+.ps-char-svg .ps-puff3 { animation: ps-puff 2.2s steps(8) 1.4s 5; }
+.ps-char-svg .ps-badge { animation: ps-badge 1.6s steps(4) 0s 6; }
+.ps-char-svg .ps-zap { animation: ps-zap 0.9s steps(2, jump-none) 0s 8; }
+.ps-char-svg .ps-stamp-prop { animation: ps-stamp-prop 2.6s steps(2) 0s 4; }
+.ps-desk[data-status="done"] .ps-char-svg .ps-spark1 { animation: ps-twinkle 1.6s steps(5) 0s 4; }
+.ps-char-svg .ps-spark2 { animation: ps-twinkle 1.6s steps(5) 0.5s 4; }
+.ps-char-svg .ps-spark3 { animation: ps-twinkle 1.6s steps(5) 1s 4; }
+/* only while the working glyph is showing: animations under display:none would still tick every frame */
+.ps-desk[data-status="working"] .ps-g-blink { animation: ps-blink 0.9s steps(2, jump-none) infinite; }
+.ps-desk[data-status="working"] .ps-g-route { animation: ps-dash 1.2s steps(5) infinite; }
+
+@keyframes ps-zz {
+  0% { transform: translate(0, 5px) scale(0.7); opacity: 0; }
+  25% { opacity: 0.8; }
+  70% { opacity: 0.55; }
+  100% { transform: translate(3px, -7px) scale(1.15); opacity: 0; }
+}
+
+@keyframes ps-tap {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-16deg); }
+}
+
+@keyframes ps-dot {
+  0%, 100% { opacity: 0.25; }
+  40% { opacity: 1; }
+}
+
+@keyframes ps-hammer {
+  0%, 100% { transform: rotate(-32deg); }
+  40% { transform: rotate(14deg); }
+  48% { transform: rotate(18deg); }
+}
+
+@keyframes ps-twinkle {
+  0%, 100% { transform: scale(0.3) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1.1) rotate(25deg); opacity: 1; }
+}
+
+@keyframes ps-write {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-4px, 1px); }
+}
+
+@keyframes ps-scan {
+  0%, 100% { transform: translate(-3px, 0) rotate(-4deg); }
+  50% { transform: translate(8px, -2px) rotate(5deg); }
+}
+
+@keyframes ps-dash {
+  to { stroke-dashoffset: -12; }
+}
+
+@keyframes ps-pin {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+}
+
+@keyframes ps-needle {
+  0%, 100% { transform: rotate(-14deg); }
+  50% { transform: rotate(14deg); }
+}
+
+@keyframes ps-wave {
+  0%, 100% { transform: rotate(-7deg); }
+  50% { transform: rotate(8deg); }
+}
+
+@keyframes ps-ask {
+  0%, 100% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-5px) scale(1.06); }
+  55% { transform: translateY(0) scale(0.97); }
+}
+
+@keyframes ps-scratch {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(7deg); }
+}
+
+@keyframes ps-puff {
+  0% { transform: translate(0, 4px) scale(0.5); opacity: 0; }
+  25% { opacity: 0.95; }
+  100% { transform: translate(-2px, -14px) scale(1.5); opacity: 0; }
+}
+
+@keyframes ps-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.14); }
+}
+
+@keyframes ps-zap {
+  0% { opacity: 1; }
+  100% { opacity: 0.15; }
+}
+
+@keyframes ps-stamp-prop {
+  0%, 70%, 100% { transform: translateY(0); }
+  80% { transform: translateY(5px); }
+}
+
+@keyframes ps-blink {
+  0% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+/* ---- scene animations ----------------------------------------------------------------------------------------------- */
+
+@keyframes ps-pose-in {
+  from { opacity: 0; transform: translateY(5px) scale(0.93); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes ps-pose-out {
+  to { opacity: 0; transform: scale(0.96); }
+}
+
+@keyframes ps-shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-4px) rotate(-2deg); }
+  30% { transform: translateX(4px) rotate(2deg); }
+  45% { transform: translateX(-3px); }
+  60% { transform: translateX(3px); }
+  80% { transform: translateX(-1px); }
+}
+
+@keyframes ps-hop {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-7px); }
+  70% { transform: translateY(1px); }
+}
+
+@keyframes ps-ring {
+  0% { opacity: 0.85; transform: scale(0.985); }
+  70%, 100% { opacity: 0; transform: scale(1.04); }
+}
+
+@keyframes ps-ripple {
+  0% { opacity: 0.9; transform: scale(0.96); }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+
+@keyframes ps-screen-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes ps-fly {
+  0% { transform: translate(var(--x0), var(--y0)); opacity: 0; }
+  12% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { transform: translate(var(--x1), var(--y1)); opacity: 0; }
+}
+
+@keyframes ps-arc {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--arc, -30px)); }
+}
+
+@keyframes ps-thump {
+  0% { transform: translate(-50%, -50%) rotate(-9deg) scale(2.4); opacity: 0; }
+  18% { transform: translate(-50%, -50%) rotate(-9deg) scale(0.92); opacity: 1; }
+  28% { transform: translate(-50%, -50%) rotate(-9deg) scale(1.06); }
+  38% { transform: translate(-50%, -50%) rotate(-9deg) scale(1); }
+  82% { opacity: 1; }
+  100% { transform: translate(-50%, -54%) rotate(-9deg) scale(1); opacity: 0; }
+}
+
+@keyframes ps-spark-out {
+  0% { transform: translate(0, 0) rotate(45deg) scale(1.2); opacity: 1; }
+  100% { transform: translate(var(--sx), var(--sy)) rotate(225deg) scale(0.2); opacity: 0; }
+}
+
+@keyframes ps-tile-in {
+  0% { transform: translateY(-14px) scale(1.5); opacity: 0; }
+  60% { transform: translateY(1px) scale(0.95); opacity: 1; }
+  100% { transform: none; }
+}
+
+/* ---- pause / reduced motion ------------------------------------------------------------------------------------------- */
+
+.ps-paused *,
+.ps-paused *::before,
+.ps-paused *::after {
+  animation-play-state: paused !important;
+}
+
+.ps-reduced *,
+.ps-reduced *::before,
+.ps-reduced *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* without the pulse, the approval ring stays on so "needs your OK" is still the loudest thing in the room */
+.ps-reduced .ps-desk[data-status="waiting_approval"] .ps-plate::after {
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ps-root *,
+  .ps-root *::before,
+  .ps-root *::after,
+  .ps-char-svg * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .ps-desk[data-status="waiting_approval"] .ps-plate::after {
+    opacity: 0.9;
+  }
+}
+
+@media (forced-colors: active) {
+  .ps-desk:focus-visible { outline-color: Highlight; }
+  .ps-desk[aria-pressed="true"] .ps-plate { border-color: Highlight; }
+}

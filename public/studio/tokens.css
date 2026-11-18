@@ -1,0 +1,84 @@
+/* Pocket Studio design tokens. The app (public/app.css) uses ONLY these variables.
+   Baseline seeded by the coordinator from the art-direction board; the studio agent owns and refines this file.
+
+   Light is the default. Dark follows prefers-color-scheme, and can be forced either way with
+   <html data-theme="light"> or <html data-theme="dark"> (used by the studio preview page).
+
+   Text pairs checked against WCAG AA (4.5:1) in test/studio/tokens.test.mjs:
+   ink, ink-soft on bg / surface / surface-2 / stage; accent-ink on accent, good, warn, bad; accent, good, warn, bad on surface.
+   Role colors are fills and outlines only (3:1 against surface); labels on them use --ink. */
+:root {
+  --bg: #f5f3ed;
+  --surface: #fffdf8;
+  --surface-2: #ece5f6;
+  --ink: #263d32;
+  --ink-soft: #5a695d;
+  --line: #d7ddcf;
+  --accent: #7956bd;
+  --accent-ink: #ffffff;
+  --good: #2f7d4f;
+  --warn: #a8641c;
+  --bad: #b3402f;
+  --role-lead: #7956bd;
+  --role-planner: #3d7f94;
+  --role-builder: #c8693a;
+  --role-checker: #4f8a3a;
+  --stage: #e8eddf;
+  --screen-bg: #22362c;
+  --screen-fg: #f1eee4;
+  --radius: 10px;
+  --radius-lg: 18px;
+  --shadow: 0 1px 2px rgba(38, 61, 50, 0.08), 0 8px 24px rgba(38, 61, 50, 0.08);
+  --font-display: ui-rounded, "SF Pro Rounded", "Avenir Next", "Nunito", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111623;
+    --surface: #1b2233;
+    --surface-2: #302945;
+    --ink: #eef0ff;
+    --ink-soft: #abb5d0;
+    --line: #364159;
+    --accent: #bca5fa;
+    --accent-ink: #1b1530;
+    --good: #8fd6a4;
+    --warn: #f0b36b;
+    --bad: #ff9a88;
+    --role-lead: #bca5fa;
+    --role-planner: #8bd1db;
+    --role-builder: #ffac8f;
+    --role-checker: #d6ed91;
+    --stage: #121b2c;
+    --screen-bg: #0a0f1a;
+    --screen-fg: #e4e9ff;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #111623;
+  --surface: #1b2233;
+  --surface-2: #302945;
+  --ink: #eef0ff;
+  --ink-soft: #abb5d0;
+  --line: #364159;
+  --accent: #bca5fa;
+  --accent-ink: #1b1530;
+  --good: #8fd6a4;
+  --warn: #f0b36b;
+  --bad: #ff9a88;
+  --role-lead: #bca5fa;
+  --role-planner: #8bd1db;
+  --role-builder: #ffac8f;
+  --role-checker: #d6ed91;
+  --stage: #121b2c;
+  --screen-bg: #0a0f1a;
+  --screen-fg: #e4e9ff;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}

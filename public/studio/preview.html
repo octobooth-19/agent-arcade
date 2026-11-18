@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pocket Studio preview · Agent Arcade</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./tokens.css">
+  <link rel="stylesheet" href="./scene.css">
+  <link rel="stylesheet" href="./preview.css">
+</head>
+<body>
+  <header class="pv-top">
+    <h1>Pocket Studio <span>preview</span></h1>
+    <p>The scene on its own, driven by the scripted demo or by hand. Nothing here talks to Copilot.</p>
+  </header>
+  <main class="pv-main">
+    <section class="pv-stage-wrap" aria-label="Scene">
+      <div id="stage" class="pv-stage"></div>
+      <p id="stage-note" class="pv-note" aria-live="polite"></p>
+    </section>
+    <aside id="panel" class="pv-panel" aria-label="Debug panel"></aside>
+  </main>
+  <script type="module" src="./preview.js"></script>
+</body>
+</html>
